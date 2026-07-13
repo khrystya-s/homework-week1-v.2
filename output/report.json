@@ -1,0 +1,41 @@
+{
+  "repository": "khrystya-s/rgr-os",
+  "summary": "An academic OS course project (розрахункова робота) containing Docker Compose–based configurations for deploying WordPress with Nginx (TLS termination) and MySQL. Two near-identical setups exist: wordpress-Khrystyna (created on Windows) and wordpress-struk, each representing a team member's environment.",
+  "technologies": [
+    "Docker",
+    "Docker Compose (version 3)",
+    "MySQL 8.0",
+    "WordPress 5.1.1-fpm-alpine",
+    "Nginx 1.15.12-alpine",
+    "TLS/SSL (self-signed certificates)"
+  ],
+  "project_structure": "Root contains README.md and two directories: wordpress-Khrystyna/ and wordpress-struk/. Each directory contains a docker-compose.yml defining three services (MySQL db, WordPress FPM, Nginx webserver) and a nginx-conf/ subdirectory with nginx.conf and a self-signed TLS certificate/key pair. The two setups are structurally identical and differ only in naming conventions.",
+  "strengths": [
+    "Consistent and parallel structure across both deployment environments",
+    "HTTPS enforced via HTTP-to-HTTPS redirect in Nginx configuration",
+    "Credentials externalized through .env file and environment variables",
+    "Named Docker volumes for data persistence (wordpress, dbdata)",
+    "Custom bridge network for service isolation (app-network)",
+    "Lightweight Alpine-based Docker images to minimize image size",
+    "Correct use of depends_on for service startup ordering"
+  ],
+  "potential_issues": [
+    "Private TLS key files (.key) are committed to the public repository — a security risk",
+    "No .env file or .env.example provided — required variables are undocumented",
+    "README is minimal (one line in Ukrainian) and lacks setup or usage instructions",
+    "No .gitignore file present — allowed sensitive files to be tracked",
+    "Docker images are significantly outdated (WordPress 5.1.1 from 2019, Nginx 1.15.12 from 2019)",
+    "nginx.conf appears to be missing the PHP-FPM fastcgi proxy block, which would prevent PHP from being served",
+    "SSL certificate names appear swapped between the two directories (Struk-Khrystyna vs Khrystyna-Struk)",
+    "No automated tests or CI/CD pipeline"
+  ],
+  "recommendations": [
+    "Remove private keys from the repository and git history immediately; add *.key and *.crt to .gitignore",
+    "Add a .gitignore file to exclude sensitive files, .env, and editor artifacts",
+    "Provide a .env.example with placeholder values for all required environment variables",
+    "Expand the README with setup instructions, prerequisites, certificate generation steps, and local hosts file configuration",
+    "Upgrade Docker images to current stable versions",
+    "Complete the nginx.conf with the missing PHP-FPM fastcgi_pass location block",
+    "Consider merging both setups into a single parameterized Compose configuration"
+  ]
+}
