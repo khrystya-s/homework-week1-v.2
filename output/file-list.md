@@ -1,0 +1,9 @@
+README.md
+wordpress-Khrystyna/docker-compose.yml
+wordpress-Khrystyna/nginx-conf/Struk-Khrystyna.crt
+wordpress-Khrystyna/nginx-conf/Struk-Khrystyna.key
+wordpress-Khrystyna/nginx-conf/nginx.conf
+wordpress-struk/docker-compose.yml
+wordpress-struk/nginx-conf/Khrystyna-Struk.crt
+wordpress-struk/nginx-conf/Khrystyna-Struk.key
+wordpress-struk/nginx-conf/nginx.conf
