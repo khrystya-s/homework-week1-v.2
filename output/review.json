@@ -1,0 +1,104 @@
+{
+  "repository": "khrystya-s/homework-week1",
+  "pull_request": 2,
+  "reviewed_files": 1,
+  "summary": "model.py implements the Model layer (MVC) of a Calorie Calculator Python app. The code is functionally reasonable but has 3 HIGH-severity issues around data safety and performance, 5 MEDIUM issues around architecture and code style, and 4 LOW issues around readability.",
+  "issues": [
+    {
+      "severity": "HIGH",
+      "category": "Potential Bug / Data Loss",
+      "file": "model.py",
+      "line": 232,
+      "comment": "In the load() method, catching KeyError at the top level means a single corrupted record in data.json causes the entire user dataset to be silently discarded and replaced with defaults.",
+      "recommendation": "Handle errors per-record inside the list comprehensions, skipping only malformed records and logging a warning. Separate KeyError from json.JSONDecodeError handling."
+    },
+    {
+      "severity": "HIGH",
+      "category": "Potential Bug",
+      "file": "model.py",
+      "line": 257,
+      "comment": "_load_defaults() calls self.save() unconditionally with no exception handling. If the filesystem is read-only or permissions are insufficient, the constructor raises an unhandled exception and the app crashes on first launch.",
+      "recommendation": "Wrap the self.save() call in _load_defaults() with try/except OSError and handle gracefully (e.g., log a warning)."
+    },
+    {
+      "severity": "HIGH",
+      "category": "Performance / Logic Bug",
+      "file": "model.py",
+      "line": 308,
+      "comment": "recalc_water_from_meals calls get_food_by_name twice per meal entry inside a generator expression — once for the None guard and once for the getattr call. get_food_by_name performs a linear scan, making this O(n*m) with redundant work.",
+      "recommendation": "Store the result in a local variable inside a regular for-loop to avoid the double scan."
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "Architecture",
+      "file": "model.py",
+      "line": 197,
+      "comment": "DATA_FILE = 'data.json' is relative to the current working directory. If the app is launched from a different directory, data will be silently lost or a new empty file created.",
+      "recommendation": "Use pathlib.Path(__file__).parent / 'data.json' to anchor the path relative to the module file."
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "Code Style / Maintainability",
+      "file": "model.py",
+      "line": 261,
+      "comment": "Multiple CRUD methods use semicolons to combine two statements on one line (e.g. self.food_items.append(item); self.save()). This is against PEP 8 Compound Statements guidelines and reduces readability.",
+      "recommendation": "Split each statement onto its own line."
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "Performance / Architecture",
+      "file": "model.py",
+      "line": 263,
+      "comment": "get_food_by_name performs a linear scan of food_items on every call. It is invoked inside analytics loops, creating O(n*m) complexity.",
+      "recommendation": "Maintain a dict[str, FoodItem] index keyed by name. Update it in add_food, edit_food, delete_food, and _load_defaults."
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "Performance",
+      "file": "model.py",
+      "line": 395,
+      "comment": "activity_heatmap, calories_vs_burned_by_date, and similar methods iterate the full log once per day, giving O(days * log_size) complexity. For a 12-week heatmap this is 84 full scans.",
+      "recommendation": "Pre-group entries by date using collections.defaultdict before iterating days."
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "Code Style",
+      "file": "model.py",
+      "line": 515,
+      "comment": "The file does not end with a newline character (diff shows '\ No newline at end of file'). This violates the POSIX standard and PEP 8.",
+      "recommendation": "Add a trailing newline at the end of the file."
+    },
+    {
+      "severity": "LOW",
+      "category": "Readability",
+      "file": "model.py",
+      "line": 1,
+      "comment": "Comments and docstrings mix Ukrainian and English (e.g. sex: 'male' або 'female'). This inconsistency can confuse contributors.",
+      "recommendation": "Choose one language for all comments and docstrings and apply it consistently."
+    },
+    {
+      "severity": "LOW",
+      "category": "Readability",
+      "file": "model.py",
+      "line": 370,
+      "comment": "Many public methods use # inline comments instead of \"\"\"docstrings\"\"\", making them invisible to help() and documentation generators.",
+      "recommendation": "Convert relevant # comments to proper docstrings on public methods."
+    },
+    {
+      "severity": "LOW",
+      "category": "Readability",
+      "file": "model.py",
+      "line": 152,
+      "comment": "In WeightEntry.__init__, self.note is assigned before self.date, which is inconsistent with the parameter order and to_dict output order.",
+      "recommendation": "Reorder attribute assignments to match the parameter declaration and to_dict output."
+    },
+    {
+      "severity": "LOW",
+      "category": "Readability",
+      "file": "model.py",
+      "line": 176,
+      "comment": "bmi_category and bmi_color use single-line 'if: return' statements, which PEP 8 discourages.",
+      "recommendation": "Use the standard multiline if/return format."
+    }
+  ]
+}
